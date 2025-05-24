@@ -4,7 +4,9 @@ from pydantic import BaseModel, Field
 from typing import Dict, Any, List, Optional, Tuple
 
 from mcda_db import MCDADatabaseClient
+
 from Ranking_Functions.mcda_promethee_calc import MCDACalcPromethee
+from Ranking_Functions.mcda_ahp_calc import MCDACalcAHP
 
 mcp = FastMCP("MCDA_MCP")
 
@@ -39,6 +41,7 @@ async def get_process_data(input_data: ProcessInput) -> Dict[str, Any]:
     """
     return await mcda_db_client.get_process_data(input_data.process)
 # END
+
 
 # PROMETHEE CALCULATIONS RELATED
 class PrometheeInput(BaseModel):
@@ -217,3 +220,53 @@ async def promethee_6(input_data: PrometheeInput) -> dict[str, Any]:
     except Exception as e:
         return {"error": str(e)}
 # END
+
+
+
+# AHP CALCULATIONS RELATED
+
+class AHPInput(BaseModel):
+    alternatives: List[str] = Field(description="List of alternative names.")
+    criteria: List[str] = Field(description="List of criterion names.")
+    criteria_matrix: List[List[float]] = Field(description="Pairwise comparison matrix for criteria.")
+    alternatives_matrices: List[List[List[float]]] = Field(description="List of pairwise comparison matrices for alternatives per criterion.")
+    check_consistency: Optional[bool] = Field(default=True, description="Whether to check consistency of matrices.")
+    consistency_threshold: Optional[float] = Field(default=0.1, description="Maximum acceptable consistency ratio.")
+
+@mcp.tool()
+async def ahp(input_data: AHPInput) -> dict[str, Any]:
+    """
+    Runs AHP algorithm to compute priorities and final scores.
+
+    Parameters:
+    - input_data: AHPInput model with alternatives, criteria, pairwise comparison matrices, and optional parameters.
+
+    Returns:
+    - Dictionary containing criteria weights, alternative scores, consistency info, or an error message.
+    """
+    try:
+        ahp = MCDACalcAHP(
+            criteria=input_data.criteria,
+            alternatives=input_data.alternatives,
+            criteria_matrix=input_data.criteria_matrix,
+            alternatives_matrices=input_data.alternatives_matrices
+        )
+        criteria_weights, alternative_scores, consistency_info = ahp.compute_ahp(
+            check_consistency=input_data.check_consistency,
+            consistency_threshold=input_data.consistency_threshold
+        )
+        return {
+            "alternatives": input_data.alternatives,
+            "criteria": input_data.criteria,
+            "criteria_weights": criteria_weights,
+            "alternative_scores": alternative_scores,
+            "consistency_info": consistency_info
+        }
+    except Exception as e:
+        return {"error": str(e)}
+    
+# END
+
+
+if __name__ == "__main__":
+    mcp.run()
