@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 BASE_API_URL = os.getenv("MCDA_API_URL") or "http://127.0.0.1:8000"
 
-class MCDAClient:
+class MCDADatabaseClient:
     def __init__(self, base_api_url: str = BASE_API_URL):
         self.base_api_url = base_api_url
 
