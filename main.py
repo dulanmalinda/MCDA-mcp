@@ -266,7 +266,3 @@ async def ahp(input_data: AHPInput) -> dict[str, Any]:
         return {"error": str(e)}
     
 # END
-
-
-if __name__ == "__main__":
-    mcp.run()
