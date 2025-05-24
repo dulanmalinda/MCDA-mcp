@@ -79,8 +79,6 @@ This tool implements the Analytic Hierarchy Process (AHP) for deriving prioritie
 
 ## Notes
 
-- All functions are asynchronous and integrated with the `FastMCP` framework.
-- Error handling ensures robustness by returning error messages for invalid inputs or computation failures.
 - PROMETHEE methods support various preference functions (e.g., 'usual', 'u_shape', 'v_shape', 'level', 'linear', 'gaussian').
 - AHP includes consistency checks to validate pairwise comparison matrices, using a default threshold of 0.1.
 
