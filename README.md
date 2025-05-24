@@ -7,7 +7,7 @@ The server exposes structured tools through the MCP interface, allowing seamless
 
 ## Available Functions
 
-The following MCP tools are available for multi-criteria decision analysis (MCDA) using the PROMETHEE and AHP methods. Each tool is implemented as an asynchronous function within the `FastMCP` framework, accepting structured input and returning results or error messages in a dictionary.
+The following MCP tools are available for multi-criteria decision analysis (MCDA).
 
 ### PROMETHEE Methods
 
